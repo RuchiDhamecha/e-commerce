@@ -13,7 +13,7 @@ import {
   getCategories,
 } from '../services/productService';
 import { PRODUCT_CONSTANTS } from '../constants/productConstants';
-import { getUniqueBrands } from '../helpers/utils';
+import { getUniqueBrands, matchesProductSearch } from '../helpers/utils';
 import type { Product, Category } from '../types/product.types';
 import type { FilterState } from '../types/filter.types';
 
@@ -24,6 +24,7 @@ const defaultFilters: FilterState = {
   minPrice: '',
   maxPrice: '',
   brands: [],
+  productSearch: '',
   page: 1,
 };
 
@@ -44,7 +45,6 @@ const ProductContext = createContext<ProductContextValue | null>(null);
 const ProductProvider = ({ children }: { children: ReactNode }) => {
   const [filterState, setFilterState] = useState<FilterState>(defaultFilters);
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,8 +64,14 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
           : getProducts(200, 0),
         getCategories(),
       ]);
-      setProducts(productsRes.products);
-      setCategories(categoriesRes);
+      const productList = productsRes?.products;
+      setProducts(Array.isArray(productList) ? productList : []);
+      const catList = categoriesRes;
+      setCategories(
+        Array.isArray(catList)
+          ? catList.map((c) => (typeof c === 'string' ? { slug: c, name: c } : { slug: c?.slug ?? '', name: c?.name ?? '' }))
+          : []
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : PRODUCT_CONSTANTS.productDetail.failedToFetch);
     } finally {
@@ -77,7 +83,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     fetchData();
   }, [fetchData]);
 
-  useEffect(() => {
+  const filteredProducts = useMemo(() => {
     let result = [...products];
     const min = filterState.minPrice ? Number(filterState.minPrice) : null;
     const max = filterState.maxPrice ? Number(filterState.maxPrice) : null;
@@ -87,11 +93,15 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     if (max != null && !Number.isNaN(max)) {
       result = result.filter((p) => p.price <= max);
     }
-    if (filterState.brands.length > 0) {
-      result = result.filter((p) => filterState.brands.includes(p.brand));
+    if (filterState.brands?.length) {
+      result = result.filter((p) => filterState.brands.includes(p.brand ?? ''));
     }
-    setFilteredProducts(result);
-  }, [products, filterState.minPrice, filterState.maxPrice, filterState.brands]);
+    const search = filterState.productSearch ?? '';
+    if (search.trim()) {
+      result = result.filter((p) => matchesProductSearch(p, search));
+    }
+    return result;
+  }, [products, filterState.minPrice, filterState.maxPrice, filterState.brands, filterState.productSearch]);
 
   const total = filteredProducts.length;
   const start = (filterState.page - 1) * PAGE_SIZE;

@@ -8,7 +8,7 @@ interface SearchInputProps {
 
 const sizeClasses = {
   sm: 'pl-9 pr-3 py-2 text-sm max-w-[200px]',
-  md: 'pl-10 pr-4 py-2.5 text-sm max-w-[400px]',
+  md: 'pl-10 pr-4 py-2.5 text-sm max-w-[520px]',
 };
 
 const SearchInput = ({

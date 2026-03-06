@@ -3,5 +3,6 @@ export interface FilterState {
   minPrice: string;
   maxPrice: string;
   brands: string[];
+  productSearch: string;
   page: number;
 }

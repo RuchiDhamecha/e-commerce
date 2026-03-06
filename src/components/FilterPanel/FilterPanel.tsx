@@ -8,11 +8,21 @@ const FilterPanel = () => {
   const { filterPanel } = PRODUCT_CONSTANTS.productListing;
   const [minPrice, setMinPrice] = useState(filterState.minPrice);
   const [maxPrice, setMaxPrice] = useState(filterState.maxPrice);
+  const [filterSearch, setFilterSearch] = useState('');
 
   useEffect(() => {
     setMinPrice(filterState.minPrice);
     setMaxPrice(filterState.maxPrice);
   }, [filterState.minPrice, filterState.maxPrice]);
+
+  const q = (filterSearch ?? '').toLowerCase().trim();
+  const filteredCategories = q
+    ? categories.filter(
+        (c) =>
+          (c?.name ?? '').toLowerCase().includes(q) || (c?.slug ?? '').toLowerCase().includes(q)
+      )
+    : categories;
+  const filteredBrands = q ? brands.filter((b) => (b ?? '').toLowerCase().includes(q)) : brands;
 
   const handleCategoryChange = (category: string) => {
     setFilterState((prev) => ({ ...prev, category, brands: [], page: 1 }));
@@ -32,14 +42,19 @@ const FilterPanel = () => {
   };
 
   return (
-    <aside className="w-64 shrink-0 bg-white border-r border-gray-200 p-5 overflow-y-auto min-h-0">
+    <aside className="w-64 shrink-0 min-w-0 max-h-[calc(100vh-4rem)] bg-white border-r border-gray-200 p-5 overflow-y-auto overflow-x-hidden">
       <div className="mb-5">
-        <SearchInput placeholder="Search..." size="sm" />
+        <SearchInput
+          placeholder="Search..."
+          size="sm"
+          value={filterSearch}
+          onChange={setFilterSearch}
+        />
       </div>
 
-      <fieldset className="mb-5">
+      <fieldset className="mb-5 shrink-0">
         <legend className="mb-3 font-bold text-gray-900">{filterPanel.category}</legend>
-        <div className="space-y-2 overflow-y-auto max-h-44">
+        <div className="space-y-2">
           <label className="flex items-center gap-3 cursor-pointer text-gray-800 hover:text-gray-900">
             <input
               type="radio"
@@ -50,7 +65,7 @@ const FilterPanel = () => {
             />
             <span>{filterPanel.all}</span>
           </label>
-          {categories.map((c) => (
+          {filteredCategories.map((c) => (
             <label key={c.slug} className="flex items-center gap-3 cursor-pointer text-gray-800 hover:text-gray-900">
               <input
                 type="radio"
@@ -69,20 +84,20 @@ const FilterPanel = () => {
         <h3 id="price-range-heading" className="font-bold text-gray-900 mb-3">
           {filterPanel.priceRange}
         </h3>
-        <div className="flex gap-2 mb-2">
+        <div className="flex flex-col gap-2 mb-2">
           <input
             type="number"
             placeholder={filterPanel.minPlaceholder}
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="flex-1 px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full min-w-0 px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
           <input
             type="number"
             placeholder={filterPanel.maxPlaceholder}
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="flex-1 px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full min-w-0 px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
         <button
@@ -94,10 +109,10 @@ const FilterPanel = () => {
         </button>
       </section>
 
-      <fieldset className="mt-6">
+      <fieldset className="mt-6 shrink-0">
         <legend className="mb-3 font-bold text-gray-900">{filterPanel.brand}</legend>
-        <div className="space-y-2 overflow-y-auto max-h-72">
-          {brands.map((brand) => (
+        <div className="space-y-2">
+          {filteredBrands.map((brand) => (
             <label key={brand} className="flex items-center gap-3 cursor-pointer text-gray-800 hover:text-gray-900">
               <input
                 type="checkbox"

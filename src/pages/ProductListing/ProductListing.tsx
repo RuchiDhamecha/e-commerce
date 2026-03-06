@@ -1,9 +1,11 @@
 import { useProductContext } from '../../context/ProductContext';
+import { useSidebar } from '../../context/SidebarContext';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import FilterPanel from '../../components/FilterPanel/FilterPanel';
 import Footer from '../../layout/Footer/Footer';
 import Loader from '../../components/Loader/Loader';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import EmptyState from '../../components/EmptyState/EmptyState';
 import { PAGE_SIZE } from './ProductListing.service';
 import { PRODUCT_CONSTANTS } from '../../constants/productConstants';
 
@@ -17,13 +19,14 @@ const ProductListing = () => {
     error,
     retry,
   } = useProductContext();
+  const { sidebarOpen } = useSidebar();
 
   if (loading) return <Loader />;
   if (error) return <ErrorMessage message={error} onRetry={retry} />;
 
   return (
     <section className="flex min-h-0 flex-1 overflow-hidden bg-gray-50" aria-labelledby="product-listing-heading">
-      <FilterPanel />
+      {sidebarOpen && <FilterPanel />}
       <section className="flex-1 flex flex-col min-w-0 overflow-auto">
         <section className="p-6 flex-1" aria-labelledby="product-listing-heading">
           <h2 id="product-listing-heading" className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
@@ -33,11 +36,7 @@ const ProductListing = () => {
             Filters
           </h2>
           {products.length === 0 ? (
-            <section className="flex min-h-[200px] items-center justify-center rounded-lg border border-gray-200 bg-white p-8" role="status" aria-live="polite">
-              <p className="text-center text-gray-600">
-                {PRODUCT_CONSTANTS.productListing.noProductsFound}
-              </p>
-            </section>
+            <EmptyState message={PRODUCT_CONSTANTS.productListing.noProductsFound} />
           ) : (
             <>
               <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" aria-label="Products">
