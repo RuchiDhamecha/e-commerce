@@ -1,4 +1,4 @@
-# Amazon Clone (E-Commerce)
+# E-Commerce Web Application (Amazon Clone)
 
 Product listing app with filters, search, and detail pages. Built with React and TypeScript.
 
@@ -72,15 +72,21 @@ On the listing page, the header shows menu and search. On the detail page, those
 ### Product Listing Page
 
 1. All Products
+<img width="1365" height="673" alt="image" src="https://github.com/user-attachments/assets/f494fd7e-648f-4b0b-836d-37482aef3f1a" />
 
+<img width="1365" height="673" alt="image" src="https://github.com/user-attachments/assets/3a408c72-684f-4625-bd08-162e8bdeb2dd" />
 
 2. Filtered Products based on applied filters
+<img width="1365" height="679" alt="image" src="https://github.com/user-attachments/assets/36c3d2fe-a6c8-49c3-a05b-06a3b4ebadf6" />
 
 
 3. Searched Products and filters
+<img width="1365" height="668" alt="image" src="https://github.com/user-attachments/assets/6ca16f8f-362a-4231-ae9d-55a5f9907b54" />
 
 ### Product Detail Page
 
 1. Product Details page
+<img width="1360" height="673" alt="image" src="https://github.com/user-attachments/assets/596e704d-ff8e-442a-9bee-971be44e54f7" />
 
 2. Display Product image
+<img width="1365" height="679" alt="image" src="https://github.com/user-attachments/assets/daa75bcb-0788-4e65-974f-69e2b5c57de3" />
