@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# Amazon Clone (E-Commerce)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Product listing app with filters, search, and detail pages. Built with React and TypeScript.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+You’ll need Node.js (v18+) and npm.
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+App runs at `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## Assumptions
+
+- **DummyJSON** is the only data source. I’ve assumed its response shape stays as documented and that the categories endpoint returns objects with `slug` and `name` (or strings that get normalized).
+- **Client-side filtering**. All filtering (price, brand, search) is done in the browser. For large datasets, this would be moved to the backend.
+- **Products per category**. When a category is selected, I fetch products for that category only. The API doesn’t support combined filters, so price/brand/search are applied after fetching.
+
+---
+
+## Architectural Decisions
+
+**Context for shared state**
+
+Product list, filters, categories, brands, and loading/error state live in `ProductContext`. That keeps the header search and the listing page in sync without prop drilling. A separate `SidebarContext` handles sidebar open/close because it’s UI-only and not tied to product data.
+
+**Client-side filtering**
+
+The API doesn’t support price range, brand, or full-text search. I fetch products by category (or all products) and then apply filters in memory. Pagination is also client-side. It’s simple and fine for this dataset; for real production use, these would be server-side.
+
+**Lazy loading routes**
+
+`ProductListing` and `ProductDetail` are lazy-loaded. Smaller initial bundle and quicker first load, since the detail page isn’t needed until someone clicks a product.
+
+**Centralized text and endpoints**
+
+`productConstants` holds all user-facing strings. `apiEndpoints` centralizes API paths. Easier to change copy or API structure later.
+
+**Layout split by route**
+
+On the listing page, the header shows menu and search. On the detail page, those are hidden and only cart/profile icons show. Routing drives what’s visible, not separate layouts.
+
+---
+
+## Improvements (If I Had More Time)
+
+- **Tests** – Unit tests for helpers (`matchesProductSearch`, `getUniqueBrands`), integration tests for main flows (filter, search, pagination).
+- **Error boundary** – A top-level error boundary so a crash in one part doesn’t take down the whole app.
+- **URL-backed filters** – Sync filters to the URL (e.g. `?category=groceries&brand=Samsung`) for shareable and bookmarkable states.
+- **Server-side filtering** – If the API supports it, move price, brand, and search to the backend to handle large catalogs.
+- **Accessibility** – More ARIA labels, skip links, and keyboard navigation where needed.
+
+
+## Tech Stack
+
+- **React 19** – UI library
+- **TypeScript** – Type safety
+- **Vite** – Build tool and dev server
+- **React Router v7** – Routing
+- **Tailwind CSS** – Styling
+- **Axios** – HTTP client for API calls
+- **DummyJSON** – Product data API (`https://dummyjson.com`)
+
+## Screenshots
+
+### Product Listing Page
+
+1. All Products
+
+
+2. Filtered Products based on applied filters
+
+
+3. Searched Products and filters
+
+### Product Detail Page
+
+1. Product Details page
+
+2. Display Product image
