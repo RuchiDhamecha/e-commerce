@@ -15,7 +15,7 @@ const FilterPanel = () => {
   }, [filterState.minPrice, filterState.maxPrice]);
 
   const handleCategoryChange = (category: string) => {
-    setFilterState((prev) => ({ ...prev, category, page: 1 }));
+    setFilterState((prev) => ({ ...prev, category, brands: [], page: 1 }));
   };
 
   const handleApplyPrice = () => {

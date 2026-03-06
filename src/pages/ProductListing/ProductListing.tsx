@@ -5,6 +5,7 @@ import Footer from '../../layout/Footer/Footer';
 import Loader from '../../components/Loader/Loader';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import { PAGE_SIZE } from './ProductListing.service';
+import { PRODUCT_CONSTANTS } from '../../constants/productConstants';
 
 const ProductListing = () => {
   const {
@@ -31,18 +32,28 @@ const ProductListing = () => {
             </svg>
             Filters
           </h2>
-          <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" aria-label="Products">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </section>
+          {products.length === 0 ? (
+            <section className="flex min-h-[200px] items-center justify-center rounded-lg border border-gray-200 bg-white p-8" role="status" aria-live="polite">
+              <p className="text-center text-gray-600">
+                {PRODUCT_CONSTANTS.productListing.noProductsFound}
+              </p>
+            </section>
+          ) : (
+            <>
+              <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" aria-label="Products">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </section>
+              <Footer
+                page={filterState.page}
+                total={total}
+                limit={PAGE_SIZE}
+                onPageChange={(page) => setFilterState((prev) => ({ ...prev, page }))}
+              />
+            </>
+          )}
         </section>
-        <Footer
-          page={filterState.page}
-          total={total}
-          limit={PAGE_SIZE}
-          onPageChange={(page) => setFilterState((prev) => ({ ...prev, page }))}
-        />
       </section>
     </section>
   );

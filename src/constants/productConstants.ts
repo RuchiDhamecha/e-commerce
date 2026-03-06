@@ -1,5 +1,6 @@
 export const PRODUCT_CONSTANTS = {
   productListing: {
+    noProductsFound: 'No products match your filters. Try adjusting your search criteria.',
     filterPanel: {
       category: 'Category',
       priceRange: 'Price Range',
