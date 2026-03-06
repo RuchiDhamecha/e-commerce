@@ -78,6 +78,8 @@ On the listing page, the header shows menu and search. On the detail page, those
 
 2. Filtered Products based on applied filters
 <img width="1365" height="679" alt="image" src="https://github.com/user-attachments/assets/36c3d2fe-a6c8-49c3-a05b-06a3b4ebadf6" />
+Menu Icon on navbar turn On/Off sidebar
+<img width="1365" height="678" alt="image" src="https://github.com/user-attachments/assets/28af3a0b-9cf7-40c4-aecf-f10797b22b76" />
 
 
 3. Searched Products and filters
