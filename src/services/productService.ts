@@ -5,9 +5,7 @@ import type { Product, ProductsResponse, Category } from '../types/product.types
 const api = axios.create({ baseURL: 'https://dummyjson.com' });
 
 export async function getProducts(limit: number, skip: number) {
-  const { data } = await api.get<ProductsResponse>(
-    `${API.PRODUCTS}?limit=${limit}&skip=${skip}`
-  );
+  const { data } = await api.get<ProductsResponse>(API.PRODUCTS_PAGINATED(limit, skip));
   return data;
 }
 

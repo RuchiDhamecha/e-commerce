@@ -8,7 +8,7 @@ interface SidebarContextValue {
 const SidebarContext = createContext<SidebarContextValue | null>(null);
 
 const SidebarProvider = ({ children }: { children: ReactNode }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const toggleSidebar = useCallback(() => setSidebarOpen((prev) => !prev), []);
   return (
     <SidebarContext.Provider value={{ sidebarOpen, toggleSidebar }}>

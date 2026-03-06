@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getProduct } from '../../services/productService';
 import type { Product } from '../../types/product.types';
@@ -25,6 +25,21 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageFullscreen, setImageFullscreen] = useState(false);
+
+  const closeFullscreen = useCallback(() => setImageFullscreen(false), []);
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => e.key === 'Escape' && closeFullscreen();
+    if (imageFullscreen) {
+      document.addEventListener('keydown', handler);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', handler);
+      document.body.style.overflow = '';
+    };
+  }, [imageFullscreen, closeFullscreen]);
+
   useEffect(() => {
     if (!id) return;
     setLoading(true);
@@ -71,12 +86,45 @@ const ProductDetail = () => {
 
         <section className="flex flex-col gap-8 md:flex-row" aria-label="Product information">
           <figure className="flex flex-1 justify-center">
-            <img
-              src={product.thumbnail}
-              alt={product.title}
-              className="aspect-square w-full max-w-sm object-contain"
-            />
+            <button
+              type="button"
+              onClick={() => setImageFullscreen(true)}
+              className="cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+            >
+              <img
+                src={product.thumbnail}
+                alt={product.title}
+                className="aspect-square w-full max-w-sm object-contain"
+              />
+            </button>
           </figure>
+
+          {imageFullscreen && (
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Product image fullscreen"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+              onClick={closeFullscreen}
+            >
+              <button
+                type="button"
+                onClick={closeFullscreen}
+                className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full"
+                aria-label="Close"
+              >
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <img
+                src={product.thumbnail}
+                alt={product.title}
+                className="max-w-full max-h-full object-contain"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          )}
 
           <section className="flex-1" aria-labelledby="product-detail-heading">
             <header>

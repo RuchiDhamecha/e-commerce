@@ -1,31 +1,41 @@
+import { useLocation } from 'react-router-dom';
 import SearchInput from '../../helpers/searchUtil';
 import { useSidebar } from '../../context/SidebarContext';
 import { useProductContext } from '../../context/ProductContext';
 
 const Header = () => {
+  const { pathname } = useLocation();
   const { toggleSidebar } = useSidebar();
   const { filterState, setFilterState } = useProductContext();
+  const isDetailPage = /^\/product\/\d+$/.test(pathname);
+
   return (
     <header className="bg-slate-700 px-4 py-3 flex items-center gap-4 shrink-0">
-      <button
-        type="button"
-        onClick={toggleSidebar}
-        className="p-2 text-white hover:bg-slate-600 rounded-lg shrink-0"
-        aria-label="Menu"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-      <div className="flex-1 flex justify-center min-w-0">
-        <SearchInput
-          placeholder="Search products..."
-          size="md"
-          className="w-full max-w-[520px]"
-          value={filterState.productSearch}
-          onChange={(v) => setFilterState((prev) => ({ ...prev, productSearch: v, page: 1 }))}
-        />
-      </div>
+      {/* on details page, dont need search bar and menu bar */}
+      {!isDetailPage && (
+        <>
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            className="p-2 text-white hover:bg-slate-600 rounded-lg shrink-0"
+            aria-label="Menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <div className="flex-1 flex justify-center min-w-0">
+            <SearchInput
+              placeholder="Search products..."
+              size="md"
+              className="w-full max-w-[520px]"
+              value={filterState.productSearch}
+              onChange={(v) => setFilterState((prev) => ({ ...prev, productSearch: v, page: 1 }))}
+            />
+          </div>
+        </>
+      )}
+      {isDetailPage && <div className="flex-1" />}
       <nav
         aria-label="Header actions"
         className="flex items-center gap-2 shrink-0"
